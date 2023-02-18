@@ -59,7 +59,7 @@ class DateTimeTests {
 	@Test
 	void workingDaysTest() {
 		LocalDate current = LocalDate.parse("2023-02-14");
-		assertEquals(current.plusDays(12), current.with(new WorkingDays(10, new DayOfWeek[]{DayOfWeek.SATURDAY})));
-		assertEquals(current.plusDays(10), current.with(new WorkingDays(10, new DayOfWeek[] {})));
+		assertEquals(current.plusDays(12), current.with(new WorkingDays(new DayOfWeek[]{DayOfWeek.SATURDAY}, 10)));
+		assertEquals(current.plusDays(10), current.with(new WorkingDays(new DayOfWeek[] {}, 10)));
 	}
 }

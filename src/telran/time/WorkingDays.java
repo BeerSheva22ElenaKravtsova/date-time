@@ -1,40 +1,34 @@
 package telran.time;
 
 import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.time.temporal.*;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
+import java.util.Arrays;
 
 public class WorkingDays implements TemporalAdjuster {
-	int amountOfWorkingDays;
-	DayOfWeek[] dayOffs;
-
-	public WorkingDays(int amountOfWorkingDays, DayOfWeek[] dayOffs) {
-		this.amountOfWorkingDays = amountOfWorkingDays;
-		this.dayOffs = dayOffs;
-	}
+	private int[] daysOff;
+	private int nDays;
 
 	@Override
 	public Temporal adjustInto(Temporal temporal) {
-		LocalDate from = LocalDate.from(temporal);
-		return temporal.plus(nextWorkDay(from), ChronoUnit.DAYS);
-	}
-
-	private long nextWorkDay(LocalDate from) {
-		LocalDate resDate = from;
-		while (amountOfWorkingDays != 0) {
-			resDate = resDate.plusDays(1);
-			if (dayOffs.length == 0) {
-				amountOfWorkingDays--;
-			} else {
-				for (DayOfWeek dayOfWeek : dayOffs) {
-					if (!resDate.getDayOfWeek().equals(dayOfWeek)) {
-						amountOfWorkingDays--;
-					}
+		int count = 0;
+		if (daysOff.length < DayOfWeek.values().length) {
+			while (count != nDays) {
+				temporal = temporal.plus(1, ChronoUnit.DAYS);
+				if (!contains(temporal.get(ChronoField.DAY_OF_WEEK))) {
+					count++;
 				}
 			}
 		}
-		return ChronoUnit.DAYS.between(from, resDate);
+		return temporal;
+	}
+
+	private boolean contains(int day) {
+		return Arrays.stream(daysOff).anyMatch(d -> d == day);
+	}
+
+	public WorkingDays(DayOfWeek[] dayOffs, int nDays) {
+		daysOff = Arrays.stream(dayOffs).mapToInt(d -> d.getValue()).toArray();
 	}
 }

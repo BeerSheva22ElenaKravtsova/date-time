@@ -3,6 +3,7 @@ package telran.time;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
@@ -12,18 +13,20 @@ public class NextFriday13 implements TemporalAdjuster {
 
 	@Override
 	public Temporal adjustInto(Temporal temporal) {
-		LocalDate from = LocalDate.from(temporal);
-		return temporal.plus(nextFriday13(from), ChronoUnit.DAYS);
+		temporal = adjustTemporal(temporal);
+		while(temporal.get(ChronoField.DAY_OF_WEEK) != DayOfWeek.FRIDAY.getValue()) {
+			temporal = temporal.plus(1, ChronoUnit.MONTHS);
+		}
+		return temporal;
 	}
 
-	private long nextFriday13(LocalDate localDate) {
-		LocalDate resDate = localDate.plusDays(1);
-		while (resDate.getDayOfMonth() != 13) {
-			resDate = resDate.plusDays(1);
+	private Temporal adjustTemporal(Temporal temporal) {
+		if (temporal.get(ChronoField.DAY_OF_MONTH) >= 13) {
+			temporal = temporal.plus(1, ChronoUnit.MONTHS);
 		}
-		while (!resDate.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
-			resDate = resDate.plusMonths(1);
-		}
-		return ChronoUnit.DAYS.between(localDate, resDate);
+		return temporal.with(ChronoField.DAY_OF_MONTH, 13);
 	}
+	
+	
+	
 }
