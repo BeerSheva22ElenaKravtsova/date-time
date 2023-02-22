@@ -5,6 +5,7 @@ import java.time.temporal.*;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAdjuster;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class WorkingDays implements TemporalAdjuster {
 	private int[] daysOff;
@@ -28,7 +29,7 @@ public class WorkingDays implements TemporalAdjuster {
 		return Arrays.stream(daysOff).anyMatch(d -> d == day);
 	}
 
-	public WorkingDays(DayOfWeek[] dayOffs, int nDays) {
-		daysOff = Arrays.stream(dayOffs).mapToInt(d -> d.getValue()).toArray();
+	public WorkingDays(DayOfWeek[] dayOfWeeks, int i) {
+		daysOff = Arrays.stream(dayOfWeeks).mapToInt(d -> d.getValue()).toArray();
 	}
 }
